@@ -1,4 +1,4 @@
-package com.example
+package com.conferapi
 
 import io.ktor.application.*
 import io.ktor.response.*
@@ -12,6 +12,10 @@ import io.ktor.http.content.*
 import io.ktor.locations.*
 import io.ktor.sessions.*
 import io.ktor.features.*
+import io.ktor.util.date.*
+import io.ktor.websocket.*
+import io.ktor.http.cio.websocket.*
+import java.time.*
 import io.ktor.auth.*
 import io.ktor.gson.*
 import io.ktor.client.*
@@ -40,6 +44,8 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
+    install(ConditionalHeaders)
+
     install(CORS) {
         method(HttpMethod.Options)
         method(HttpMethod.Put)
@@ -51,6 +57,19 @@ fun Application.module(testing: Boolean = false) {
         anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
     }
 
+    install(CachingHeaders) {
+        options { outgoingContent ->
+            when (outgoingContent.contentType?.withoutParameters()) {
+                ContentType.Text.CSS -> CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 24 * 60 * 60), expires = null as? GMTDate?)
+                else -> null
+            }
+        }
+    }
+
+    install(DefaultHeaders) {
+        header("X-Engine", "Ktor") // will send this header with each response
+    }
+
     // https://ktor.io/servers/features/https-redirect.html#testing
     if (!testing) {
         install(HttpsRedirect) {
@@ -59,6 +78,13 @@ fun Application.module(testing: Boolean = false) {
             // 301 Moved Permanently, or 302 Found redirect.
             permanentRedirect = true
         }
+    }
+
+    install(io.ktor.websocket.WebSockets) {
+        pingPeriod = Duration.ofSeconds(15)
+        timeout = Duration.ofSeconds(15)
+        maxFrameSize = Long.MAX_VALUE
+        masking = false
     }
 
     install(Authentication) {
@@ -110,6 +136,16 @@ fun Application.module(testing: Boolean = false) {
             val session = call.sessions.get<MySession>() ?: MySession()
             call.sessions.set(session.copy(count = session.count + 1))
             call.respondText("Counter is ${session.count}. Refresh to increment.")
+        }
+
+        webSocket("/myws/echo") {
+            send(Frame.Text("Hi from server"))
+            while (true) {
+                val frame = incoming.receive()
+                if (frame is Frame.Text) {
+                    send(Frame.Text("Client said: " + frame.readText()))
+                }
+            }
         }
 
         get("/json/gson") {

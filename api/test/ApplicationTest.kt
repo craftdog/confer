@@ -1,4 +1,4 @@
-package com.example
+package com.conferapi
 
 import io.ktor.application.*
 import io.ktor.response.*
@@ -12,6 +12,10 @@ import io.ktor.http.content.*
 import io.ktor.locations.*
 import io.ktor.sessions.*
 import io.ktor.features.*
+import io.ktor.util.date.*
+import io.ktor.websocket.*
+import io.ktor.http.cio.websocket.*
+import java.time.*
 import io.ktor.auth.*
 import io.ktor.gson.*
 import io.ktor.client.*
