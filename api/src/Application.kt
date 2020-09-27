@@ -1,5 +1,6 @@
 package com.confer.api
 
+import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.request.*
@@ -89,60 +90,141 @@ fun Application.module(testing: Boolean = true) {
     val client = HttpClient(Apache) {
     }
 
+
+
     routing {
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+        root()
+    }
+}
+
+fun Routing.root() {
+    route("/participant") {
+        get("/info/{id}") {
+            val id = call.parameters["id"]
+            call.respondText("id get")
         }
 
-        get("/html-dsl") {
-            call.respondHtml {
-                body {
-                    h1 { +"HTML" }
-                    ul {
-                        for (n in 1..10) {
-                            li { +"$n" }
-                        }
+        post("/create") {
+            call.respondText("{\"test\":\"result\"}")
+        }
+
+        delete("/remove/{id}") {
+            call.respondText("Remove")
+        }
+
+        route("/items") {
+            get("/{id}") {
+                val id: String? = call.parameters["id"]
+                if (id != null) {
+                    call.respondText("participant items id" + id)
+
+                } else {
+                    call.respondText("participant items id")
+                }
+
+            }
+
+            patch("reduce/{id}/{itemId}") {
+                println(call.parameters["id"] + "  1")
+                println(call.parameters["itemId"] + "  2")
+                call.respondText("{\"test\":\"reduce\"}")
+            }
+
+            patch("increase/{id}/{itemId}") {
+                println(call.parameters["id"] + "  1")
+                println(call.parameters["itemId"] + "  2")
+                call.respondText("{\"test\":\"increase\"}")
+            }
+        }
+
+        route("/models/items") {
+            get {
+                call.respondText("ALL ITEMS")
+            }
+
+            get("/{id}") {
+                println("ITEM: " + call.parameters["id"])
+                call.respondText("specific item")
+            }
+        }
+
+
+
+    }
+
+    /*
+    method(HttpMethod.Get) {
+        route("/participant") {
+
+        }
+    }
+    get("/test") {
+        call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+
+    }
+    get("/participant/info/{id}") {
+        val id = call.parameters["id"]
+        println(id)
+    }
+
+    get("/participant") {
+
+    }
+
+
+
+
+
+    get("/html-dsl") {
+        call.respondHtml {
+            body {
+                h1 { +"HTML" }
+                ul {
+                    for (n in 1..10) {
+                        li { +"$n" }
                     }
                 }
             }
         }
+    }
 
-        // Static feature. Try to access `/static/ktor_logo.svg`
-        static("/static") {
-            resources("static")
-        }
+    // Static feature. Try to access `/static/ktor_logo.svg`
+    static("/static") {
+        resources("static")
+    }
 
-        get<MyLocation> {
-            call.respondText("Location: name=${it.name}, arg1=${it.arg1}, arg2=${it.arg2}")
-        }
-        // Register nested routes
-        get<Type.Edit> {
-            call.respondText("Inside $it")
-        }
-        get<Type.List> {
-            call.respondText("Inside $it")
-        }
+    get<MyLocation> {
+        call.respondText("Location: name=${it.name}, arg1=${it.arg1}, arg2=${it.arg2}")
+    }
+    // Register nested routes
+    get<Type.Edit> {
+        call.respondText("Inside $it")
+    }
+    get<Type.List> {
+        call.respondText("Inside $it")
+    }
 
-        get("/session/increment") {
-            val session = call.sessions.get<MySession>() ?: MySession()
-            call.sessions.set(session.copy(count = session.count + 1))
-            call.respondText("Counter is ${session.count}. Refresh to increment.")
-        }
+    get("/session/increment") {
+        val session = call.sessions.get<MySession>() ?: MySession()
+        call.sessions.set(session.copy(count = session.count + 1))
+        call.respondText("Counter is ${session.count}. Refresh to increment.")
+    }
 
-        webSocket("/myws/echo") {
-            send(Frame.Text("Hi from server"))
-            while (true) {
-                val frame = incoming.receive()
-                if (frame is Frame.Text) {
-                    send(Frame.Text("Client said: " + frame.readText()))
-                }
+    webSocket("/myws/echo") {
+        send(Frame.Text("Hi from server"))
+        while (true) {
+            val frame = incoming.receive()
+            if (frame is Frame.Text) {
+                send(Frame.Text("Client said: " + frame.readText()))
             }
         }
-
-        get("/json/gson") {
-            call.respond(mapOf("hello" to "world"))
-        }
     }
+
+    get("/json/gson") {
+        call.respond(mapOf("hello" to "world"))
+    }
+
+     */
 }
 
 @Location("/location/{name}")
