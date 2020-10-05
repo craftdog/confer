@@ -1,5 +1,6 @@
 package com.confer.api
 
+import com.google.cloud.firestore.Firestore
 import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.response.*
@@ -22,12 +23,15 @@ import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 
 
-
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = true) {
+
+    // init db
+    val db : Firestore = getFirestore()
+
     install(Locations) {
     }
 
