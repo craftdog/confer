@@ -30,8 +30,7 @@ fun Routing.modelRouting(roles: Roles, items : Items) {
             route("/{id}") {
 
                 get() {
-                    println("ITEM: " + call.parameters["id"])
-                    call.respond(HttpStatusCode.Accepted, "get item: " + call.parameters["id"])
+                    processGetItem(call, items)
                 }
 
                 delete() {

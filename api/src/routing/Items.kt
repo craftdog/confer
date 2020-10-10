@@ -1,15 +1,13 @@
 package com.confer.api.routing
 
-import com.confer.api.utilities.Items
-import com.confer.api.utilities.itemNameIsValid
-import com.confer.api.utilities.itemQuantityIsValid
-import com.confer.api.utilities.itemRolesIsValid
+import com.confer.api.utilities.*
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveText
-import io.ktor.response.respondText
+import io.ktor.response.*
+import java.lang.IllegalArgumentException
 import java.util.*
 
 
@@ -50,6 +48,16 @@ suspend fun processCreateItem(call : ApplicationCall, items : Items) {
     } else {
         call.response.status(HttpStatusCode.BadRequest)
         call.respondText("Request must have itemName, itemQuantity and itemRoles")
+    }
+}
+
+suspend fun processGetItem(call : ApplicationCall, items : Items) {
+    val itemId = call.parameters["id"]
+    try {
+        items.getItem(itemId.toString())?.let { call.respond(it) }
+    } catch (e : IllegalArgumentException) {
+        call.response.status(HttpStatusCode.BadRequest)
+        call.respondText(e.message.toString())
     }
 }
 

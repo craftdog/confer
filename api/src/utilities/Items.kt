@@ -3,6 +3,7 @@ package com.confer.api.utilities
 import com.google.cloud.firestore.DocumentReference
 import com.google.cloud.firestore.Firestore
 import java.lang.Exception
+import java.lang.IllegalArgumentException
 
 class Items(val db: Firestore) {
 
@@ -28,6 +29,18 @@ class Items(val db: Firestore) {
         }
 
         docRef.delete();
+    }
+
+    fun getItem(itemId: String): MutableMap<String, Any>? {
+        val docRef : DocumentReference = db.collection("items").document(itemId)
+        if (documentExists(docRef)) {
+            val document = db.collection("items").document(itemId).get()
+            val snapshot = document.get()
+            return snapshot.data
+        } else {
+            throw IllegalArgumentException("Items does not exist")
+        }
+
     }
 
 }
