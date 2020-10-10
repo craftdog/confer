@@ -1,5 +1,6 @@
 package com.confer.api
 
+import com.confer.api.utilities.Roles
 import com.google.cloud.firestore.Firestore
 import com.google.gson.Gson
 import io.ktor.application.*
@@ -97,9 +98,9 @@ fun Application.module(testing: Boolean = true) {
     }
 
 
-
+    val roles = Roles(db)
     routing {
-        routingRoot()
+        routingRoot(roles)
     }
 }
 
