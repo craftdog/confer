@@ -38,3 +38,14 @@ suspend fun createRole(call : ApplicationCall, roles : Roles) {
         call.respondText("Request must have isAdmin and roleName")
     }
 }
+
+suspend fun getRole(call : ApplicationCall, roles : Roles) {
+    val roleName = call.parameters["roleName"]
+    try {
+        roles.getRole(roleName.toString())?.let { call.respond(it) }
+    } catch (e : Exception) {
+        call.response.status(HttpStatusCode.BadRequest)
+        call.respondText(e.message.toString())
+    }
+
+}

@@ -22,5 +22,17 @@ class Roles(val db : Firestore) {
 
     }
 
+    fun getRole(roleName: String): MutableMap<String, Any>? {
+        val docRef : DocumentReference = db.collection("roles").document(roleName)
+        if (documentExists(docRef)) {
+            val document = db.collection("roles").document(roleName).get()
+            val snapshot = document.get()
+            return snapshot.data
+        } else {
+            throw Exception("Role does not exist")
+        }
+
+    }
+
 
 }

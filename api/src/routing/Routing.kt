@@ -56,7 +56,7 @@ fun Routing.modelRouting(roles: Roles) {
             }
 
             get("/{roleName}") {
-                call.respondText("get role: " + call.parameters["roleName"]);
+                getRole(call, roles)
             }
 
             patch("/{roleName}") {
