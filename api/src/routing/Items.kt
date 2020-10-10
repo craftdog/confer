@@ -60,6 +60,6 @@ suspend fun processDeleteItem(call : ApplicationCall, items: Items) {
         call.respondText("`$id` sucessfully deleted")
     } catch (e : Exception) {
         call.response.status(HttpStatusCode.BadRequest)
-        call.respondText("`$id` does not exist an item")
+        call.respondText("`$id` does not exist as an item")
     }
 }
