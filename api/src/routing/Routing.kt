@@ -1,4 +1,4 @@
-package com.confer.api
+package com.confer.api.routing
 
 
 import com.confer.api.utilities.Roles
@@ -52,34 +52,7 @@ fun Routing.modelRouting(roles: Roles) {
         route("/roles") {
 
             post("/create") {
-
-                val requestBody = call.receiveText()
-                val bodyAsJson: JsonObject = JsonParser.parseString(requestBody).getAsJsonObject()
-                if (bodyAsJson.has("isAdmin")
-                    && bodyAsJson.has("roleName")) {
-
-
-                    val roleName = bodyAsJson.get("roleName").asString
-                    if (roleName.matches("^[a-zA-Z0-9]*$".toRegex())) {
-
-                        val isAdmin = bodyAsJson.get("isAdmin").asBoolean
-                        try {
-                            roles.createRole(roleName, isAdmin)
-                            call.respondText("Role Created Successfully")
-                        } catch (e : Exception) {
-                            call.response.status(HttpStatusCode.BadRequest)
-                            call.respondText(e.message.toString())
-                        }
-
-                    } else {
-                        call.response.status(HttpStatusCode.BadRequest)
-                        call.respondText("roleName must be alphanumeric")
-                    }
-
-                } else {
-                    call.response.status(HttpStatusCode.BadRequest)
-                    call.respondText("Request must have isAdmin and roleName")
-                }
+                createRole(call, roles)
             }
 
             get("/{roleName}") {
@@ -154,3 +127,4 @@ fun Routing.participantRouting() {
         }
     }
 }
+

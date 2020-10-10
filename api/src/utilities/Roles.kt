@@ -4,8 +4,7 @@ import com.google.cloud.firestore.DocumentReference
 import com.google.cloud.firestore.Firestore
 import java.lang.Exception
 
-class Roles(db : Firestore) {
-    val db : Firestore = db
+class Roles(val db : Firestore) {
 
     fun createRole(roleName : String, isAdmin : Boolean) {
         val docRef : DocumentReference = db.collection("roles").document(roleName)
@@ -18,15 +17,10 @@ class Roles(db : Firestore) {
             "isAdmin" to isAdmin
         )
 
-        val roles  = docRef.set(roleMap)
+        docRef.set(roleMap)
         print(roleMap)
 
     }
 
-    fun documentExists(docRef : DocumentReference) : Boolean {
-        val snapshot = docRef.get()
-        val response = snapshot.get()
-        return response.exists()
 
-    }
 }

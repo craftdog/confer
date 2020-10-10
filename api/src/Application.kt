@@ -1,21 +1,14 @@
 package com.confer.api
 
+import com.confer.api.routing.routingRoot
 import com.confer.api.utilities.Roles
 import com.google.cloud.firestore.Firestore
-import com.google.gson.Gson
 import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
 import io.ktor.routing.*
 import io.ktor.http.*
-import io.ktor.html.*
-import kotlinx.html.*
-import io.ktor.content.*
-import io.ktor.http.content.*
 import io.ktor.locations.*
 import io.ktor.sessions.*
 import io.ktor.features.*
-import io.ktor.websocket.*
 import io.ktor.http.cio.websocket.*
 import java.time.*
 import io.ktor.auth.*
