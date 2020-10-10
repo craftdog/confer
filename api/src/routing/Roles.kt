@@ -1,15 +1,16 @@
 package com.confer.api.routing
 
 import com.confer.api.utilities.Roles
+import com.confer.api.utilities.nameIsValid
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
-import java.lang.Exception
+import java.lang.IllegalArgumentException
 
-suspend fun createRole(call : ApplicationCall, roles : Roles) {
+suspend fun processCreateRole(call : ApplicationCall, roles : Roles) {
     val requestBody = call.receiveText()
     val bodyAsJson: JsonObject = JsonParser.parseString(requestBody).getAsJsonObject()
     if (bodyAsJson.has("isAdmin")
@@ -17,13 +18,12 @@ suspend fun createRole(call : ApplicationCall, roles : Roles) {
 
 
         val roleName = bodyAsJson.get("roleName").asString
-        if (roleName.matches("^[a-zA-Z0-9]*$".toRegex())) {
-
+        if (nameIsValid(roleName)) {
             val isAdmin = bodyAsJson.get("isAdmin").asBoolean
             try {
                 roles.createRole(roleName, isAdmin)
                 call.respondText("Role Created Successfully")
-            } catch (e : Exception) {
+            } catch (e : IllegalArgumentException) {
                 call.response.status(HttpStatusCode.BadRequest)
                 call.respondText(e.message.toString())
             }
@@ -39,11 +39,28 @@ suspend fun createRole(call : ApplicationCall, roles : Roles) {
     }
 }
 
-suspend fun getRole(call : ApplicationCall, roles : Roles) {
+suspend fun processGetRole(call : ApplicationCall, roles : Roles) {
     val roleName = call.parameters["roleName"]
     try {
         roles.getRole(roleName.toString())?.let { call.respond(it) }
-    } catch (e : Exception) {
+    } catch (e : IllegalArgumentException) {
+        call.response.status(HttpStatusCode.BadRequest)
+        call.respondText(e.message.toString())
+    }
+}
+
+suspend fun processPatchRole(call : ApplicationCall, roles : Roles) {
+    val roleName = call.parameters["roleName"]
+
+
+}
+
+suspend fun processDeleteRole(call : ApplicationCall, roles : Roles) {
+    val roleName = call.parameters["roleName"]
+    try {
+        roles.deleteRole(roleName.toString())
+        call.respondText("deleted successfully")
+    } catch (e : IllegalArgumentException) {
         call.response.status(HttpStatusCode.BadRequest)
         call.respondText(e.message.toString())
     }
