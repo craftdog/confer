@@ -88,12 +88,11 @@ fun Routing.usersRouting(users : Users) {
         }
 
         get("/info/{id}") {
-            val id = call.parameters["id"]
-            call.respondText("id get")
+            processGetUser(call, users)
         }
 
         delete("/remove/{id}") {
-            call.respondText("Remove")
+            processDeleteUser(call, users)
         }
 
         route("/items") {
