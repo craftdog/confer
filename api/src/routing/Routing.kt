@@ -1,6 +1,7 @@
 package com.confer.api.routing
 
 
+import com.confer.api.utilities.Items
 import com.confer.api.utilities.Roles
 import com.confer.api.utilities.Users
 import io.ktor.application.*
@@ -8,20 +9,18 @@ import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
-fun Routing.routingRoot(roles: Roles, users : Users) {
+fun Routing.routingRoot(roles: Roles, items : Items, users : Users) {
+    modelRouting(roles, items)
     usersRouting(users)
-    modelRouting(roles)
-
 }
 
-fun Routing.modelRouting(roles: Roles) {
+fun Routing.modelRouting(roles: Roles, items : Items) {
     route("/models") {
 
         route("/items") {
 
             post("/create") {
-
-                call.respondText("create item")
+                processCreateItem(call, items)
             }
 
             get() {
@@ -36,8 +35,7 @@ fun Routing.modelRouting(roles: Roles) {
                 }
 
                 delete() {
-                    println("delete ITEM: " + call.parameters["id"])
-                    call.respond(HttpStatusCode.Accepted, "delete item: " + call.parameters["id"])
+                    processDeleteItem(call, items)
                 }
 
                 patch("/update") {
