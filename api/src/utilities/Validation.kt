@@ -37,6 +37,7 @@ fun itemQuantityIsValid(itemQuantity : Long) : Boolean {
 
 fun itemRolesIsValid(itemRoles : List<String>) : Boolean {
     return true;
+}
 
 fun roleExists(roleName : String, db : Firestore) : Boolean {
     val docRef : DocumentReference = db.collection("roles").document(roleName)
