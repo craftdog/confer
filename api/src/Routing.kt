@@ -2,7 +2,6 @@ package com.confer.api
 
 import io.ktor.application.call
 import io.ktor.http.*
-import io.ktor.locations.Location
 import io.ktor.response.*
 import io.ktor.routing.*
 
