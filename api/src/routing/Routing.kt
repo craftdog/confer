@@ -1,6 +1,7 @@
 package com.confer.api.routing
 
 
+import com.confer.api.utilities.Items
 import com.confer.api.utilities.Roles
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -11,20 +12,18 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import java.lang.Exception
 
-fun Routing.routingRoot(roles: Roles) {
+fun Routing.routingRoot(roles: Roles, items : Items) {
     participantRouting()
-    modelRouting(roles)
-
+    modelRouting(roles, items)
 }
 
-fun Routing.modelRouting(roles: Roles) {
+fun Routing.modelRouting(roles: Roles, items : Items) {
     route("/models") {
 
         route("/items") {
 
             post("/create") {
-
-                call.respondText("create item")
+                processCreateItem(call, items)
             }
 
             get() {
@@ -39,8 +38,7 @@ fun Routing.modelRouting(roles: Roles) {
                 }
 
                 delete() {
-                    println("delete ITEM: " + call.parameters["id"])
-                    call.respond(HttpStatusCode.Accepted, "delete item: " + call.parameters["id"])
+                    processDeleteItem(call, items)
                 }
 
                 patch("/update") {
