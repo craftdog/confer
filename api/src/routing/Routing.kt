@@ -3,18 +3,15 @@ package com.confer.api.routing
 
 import com.confer.api.utilities.Items
 import com.confer.api.utilities.Roles
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.confer.api.utilities.Users
 import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import java.lang.Exception
 
-fun Routing.routingRoot(roles: Roles, items : Items) {
-    participantRouting()
+fun Routing.routingRoot(roles: Roles, items : Items, users : Users) {
     modelRouting(roles, items)
+    usersRouting(users)
 }
 
 fun Routing.modelRouting(roles: Roles, items : Items) {
@@ -50,19 +47,19 @@ fun Routing.modelRouting(roles: Roles, items : Items) {
         route("/roles") {
 
             post("/create") {
-                createRole(call, roles)
+                processCreateRole(call, roles)
             }
 
             get("/{roleName}") {
-                call.respondText("get role: " + call.parameters["roleName"]);
+                processGetRole(call, roles)
             }
 
             patch("/{roleName}") {
-                call.respondText("patch role: " + call.parameters["roleName"]);
+                processPatchRole(call, roles)
             }
 
             delete("/{roleName}") {
-                call.respondText("delete role: " + call.parameters["roleName"]);
+                processDeleteRole(call, roles)
             }
         }
 
@@ -83,16 +80,16 @@ fun Routing.modelRouting(roles: Roles, items : Items) {
 
 }
 
-fun Routing.participantRouting() {
-    route("/participant") {
+fun Routing.usersRouting(users : Users) {
+    route("/users") {
+
+        post("/create") {
+            processCreateUser(call, users)
+        }
 
         get("/info/{id}") {
             val id = call.parameters["id"]
             call.respondText("id get")
-        }
-
-        post("/create") {
-            call.respondText("{\"test\":\"result\"}")
         }
 
         delete("/remove/{id}") {
