@@ -5,6 +5,7 @@ import com.google.gson.JsonArray
 import org.json.simple.JSONArray
 import com.google.cloud.firestore.Firestore
 import com.google.gson.JsonObject
+import java.util.ArrayList
 
 fun documentExists(docRef : DocumentReference) : Boolean {
     val snapshot = docRef.get()
@@ -28,15 +29,35 @@ fun newUserIsValid(jsonBody : JsonObject, db : Firestore) : Boolean {
 }
 
 fun itemNameIsValid(itemName : String) : Boolean {
-    return true;
+    return nameIsValid(itemName);
 }
 
 fun itemQuantityIsValid(itemQuantity : Long) : Boolean {
-    return true;
+    return itemQuantity > 0;
 }
 
 fun itemRolesIsValid(itemRoles : List<String>) : Boolean {
-    return true;
+    return itemRoles.isNotEmpty();
+}
+
+fun newItemIsValid(jsonBody: JsonObject, db: Firestore) : Boolean {
+
+    if (jsonBody.has("itemRoles")) {
+        val jsonItemRoles = jsonBody.get("itemRoles").asJsonArray
+        val itemRoles: MutableList<String> = ArrayList()
+        for (i in 0 until jsonItemRoles.size()) {
+            itemRoles.add(jsonItemRoles.get(i).asString)
+        }
+
+        return jsonBody.has("itemName")
+                && jsonBody.has("itemQuantity")
+                && itemNameIsValid(jsonBody.get("itemName").asString)
+                && itemQuantityIsValid(jsonBody.get("itemQuantity").asLong)
+                && itemRolesIsValid(itemRoles)
+
+    } else {
+        return false;
+    }
 }
 
 fun roleExists(roleName : String, db : Firestore) : Boolean {

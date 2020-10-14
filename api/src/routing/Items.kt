@@ -14,10 +14,7 @@ import java.util.*
 suspend fun processCreateItem(call : ApplicationCall, items : Items) {
     val requestBody = call.receiveText()
     val bodyAsJson: JsonObject = JsonParser.parseString(requestBody).getAsJsonObject()
-    if (bodyAsJson.has("itemName")
-                && bodyAsJson.has("itemQuantity")
-                && bodyAsJson.has("itemRoles")
-        ) {
+    if (newItemIsValid(bodyAsJson, items.db)) {
         val itemName = bodyAsJson.get("itemName").asString
         val itemQuantity = bodyAsJson.get("itemQuantity").asLong
 
@@ -27,27 +24,17 @@ suspend fun processCreateItem(call : ApplicationCall, items : Items) {
             itemRoles.add(jsonItemRoles.get(i).asString)
         }
 
-        if (itemNameIsValid(itemName)
-            && itemQuantityIsValid(itemQuantity)
-            && itemRolesIsValid(itemRoles)
-        ) {
-
-            try {
-                items.createItem(itemName, itemQuantity, itemRoles)
-                call.respondText("Item Created Successfully")
-            } catch (e : Exception) {
-                call.response.status(HttpStatusCode.BadRequest)
-                call.respondText(e.message.toString())
-            }
-
-        } else {
+        try {
+            items.createItem(itemName, itemQuantity, itemRoles)
+            call.respondText("Item Created Successfully")
+        } catch (e : Exception) {
             call.response.status(HttpStatusCode.BadRequest)
-            call.respondText("Invalid data for itemName, itemQuantity or itemRoles")
+            call.respondText(e.message.toString())
         }
 
     } else {
         call.response.status(HttpStatusCode.BadRequest)
-        call.respondText("Request must have itemName, itemQuantity and itemRoles")
+        call.respondText("Request must have valid itemName, itemQuantity and itemRoles")
     }
 }
 
