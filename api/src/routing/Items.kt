@@ -61,6 +61,10 @@ suspend fun processGetItem(call : ApplicationCall, items : Items) {
     }
 }
 
+suspend fun processGetAllItems(call : ApplicationCall, items : Items) {
+    call.respond(items.getAllItems())
+}
+
 suspend fun processDeleteItem(call : ApplicationCall, items: Items) {
     val id = call.parameters["id"]
     try {

@@ -24,7 +24,7 @@ fun Routing.modelRouting(roles: Roles, items : Items) {
             }
 
             get() {
-                call.respondText("ALL ITEMS")
+                processGetAllItems(call, items)
             }
 
             route("/{id}") {
@@ -45,6 +45,10 @@ fun Routing.modelRouting(roles: Roles, items : Items) {
 
         route("/roles") {
 
+            get() {
+                processGetAllRoles(call, roles)
+            }
+
             post("/create") {
                 processCreateRole(call, roles)
             }
@@ -59,18 +63,6 @@ fun Routing.modelRouting(roles: Roles, items : Items) {
 
             delete("/{roleName}") {
                 processDeleteRole(call, roles)
-            }
-        }
-
-        route("/items") {
-
-            get {
-                call.respondText("ALL ITEMS")
-            }
-
-            get("/{id}") {
-                println("ITEM: " + call.parameters["id"])
-                call.respond(HttpStatusCode.Accepted, "hello")
             }
         }
 

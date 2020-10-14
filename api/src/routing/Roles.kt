@@ -1,5 +1,6 @@
 package com.confer.api.routing
 
+import com.confer.api.utilities.Items
 import com.confer.api.utilities.Roles
 import com.confer.api.utilities.nameIsValid
 import com.google.gson.JsonObject
@@ -37,6 +38,10 @@ suspend fun processCreateRole(call : ApplicationCall, roles : Roles) {
         call.response.status(HttpStatusCode.BadRequest)
         call.respondText("Request must have isAdmin and roleName")
     }
+}
+
+suspend fun processGetAllRoles(call : ApplicationCall, roles : Roles) {
+    call.respond(roles.getAllRoles())
 }
 
 suspend fun processGetRole(call : ApplicationCall, roles : Roles) {

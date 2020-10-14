@@ -35,6 +35,18 @@ class Roles(val db : Firestore) {
 
     }
 
+    fun getAllRoles() : MutableList<MutableMap<String, Any>?> {
+        val allDocuments = db.collection("roles").listDocuments()
+        val allItems : MutableList<MutableMap<String, Any>?> = ArrayList()
+        for (docRef in allDocuments) {
+            val document = db.collection("roles").document(docRef.id).get()
+            val snapshot = document.get()
+            allItems.add(snapshot.data)
+        }
+
+        return allItems
+    }
+
     fun patchRole(roleName: String){
 
     }
